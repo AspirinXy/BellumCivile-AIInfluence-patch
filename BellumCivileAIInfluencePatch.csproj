@@ -6,7 +6,7 @@
     <TargetFramework>net472</TargetFramework>
     <AssemblyName>BellumCivileAIInfluencePatch</AssemblyName>
     <RootNamespace>BellumCivileAIInfluencePatch</RootNamespace>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
     <LangVersion>latest</LangVersion>
     <OutputPath>$(BANNERLORD_PATH)\Modules\BellumCivileAIInfluencePatch\bin\Win64_Shipping_Client\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
