@@ -10,6 +10,8 @@
     <DependedModule Id="Sandbox"/>
     <DependedModule Id="Bannerlord.Harmony"/>
     <DependedModule Id="Bannerlord.MBOptionScreen"/>
+    <DependedModule Id="BellumCivile"/>
+    <DependedModule Id="AIInfluence"/>
   </DependedModules>
   <SubModules>
     <SubModule>
