@@ -4,11 +4,11 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <TargetFramework>net472</TargetFramework>
-    <AssemblyName>ModTemplate</AssemblyName>
-    <RootNamespace>ModTemplate</RootNamespace>
+    <AssemblyName>BellumCivileAIInfluencePatch</AssemblyName>
+    <RootNamespace>BellumCivileAIInfluencePatch</RootNamespace>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
-    <OutputPath>$(BANNERLORD_PATH)\Modules\ModTemplate\bin\Win64_Shipping_Client\</OutputPath>
+    <OutputPath>$(BANNERLORD_PATH)\Modules\BellumCivileAIInfluencePatch\bin\Win64_Shipping_Client\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 

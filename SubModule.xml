@@ -1,6 +1,6 @@
 <Module>
-  <Name value="ModTemplate"/>
-  <Id value="ModTemplate"/>
+  <Name value="BellumCivileAIInfluencePatch"/>
+  <Id value="BellumCivileAIInfluencePatch"/>
   <Version value="v1.0.0"/>
   <SingleplayerModule value="true"/>
   <MultiplayerModule value="false"/>
@@ -13,9 +13,9 @@
   </DependedModules>
   <SubModules>
     <SubModule>
-      <Name value="ModTemplate"/>
-      <DLLName value="ModTemplate.dll"/>
-      <SubModuleClassType value="ModTemplate.ModTemplateSubModule"/>
+      <Name value="BellumCivileAIInfluencePatch"/>
+      <DLLName value="BellumCivileAIInfluencePatch.dll"/>
+      <SubModuleClassType value="BellumCivileAIInfluencePatch.BellumCivileAIInfluencePatchSubModule"/>
       <Assemblies/>
     </SubModule>
   </SubModules>

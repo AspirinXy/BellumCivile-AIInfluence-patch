@@ -3,19 +3,19 @@ using HarmonyLib;
 using TaleWorlds.Core;
 using TaleWorlds.MountAndBlade;
 
-namespace ModTemplate
+namespace BellumCivileAIInfluencePatch
 {
     /// <summary>
     /// 模组主入口类，继承 MBSubModuleBase。
     /// OnSubModuleLoad：游戏启动时自动调用，在此处初始化 Harmony 补丁。
     /// OnGameStart：每局游戏开始时调用，在此处注入 MissionBehavior 或其他逻辑。
     /// </summary>
-    public class ModTemplateSubModule : MBSubModuleBase
+    public class BellumCivileAIInfluencePatchSubModule : MBSubModuleBase
     {
         protected override void OnSubModuleLoad()
         {
             base.OnSubModuleLoad();
-            new Harmony("com.modtemplate").PatchAll(Assembly.GetExecutingAssembly());
+            new Harmony("com.bellumcivileaiinfluencepatch").PatchAll(Assembly.GetExecutingAssembly());
         }
 
         protected override void OnGameStart(Game game, IGameStarter gameStarter)

@@ -2,18 +2,18 @@ using MCM.Abstractions.Attributes;
 using MCM.Abstractions.Attributes.v2;
 using MCM.Abstractions.Base.Global;
 
-namespace ModTemplate.Settings
+namespace BellumCivileAIInfluencePatch.Settings
 {
     /// <summary>
     /// MCM 游戏内配置面板。
     /// MCM 通过反射自动发现此类，无需手动注册。
     /// 必须实现四个抽象属性：Id, DisplayName, FolderName, FormatType。
     /// </summary>
-    public class ModTemplateSettings : AttributeGlobalSettings<ModTemplateSettings>
+    public class BellumCivileAIInfluencePatchSettings : AttributeGlobalSettings<BellumCivileAIInfluencePatchSettings>
     {
-        public override string Id => "ModTemplate";
-        public override string DisplayName => "Mod Template";
-        public override string FolderName => "ModTemplate";
+        public override string Id => "BellumCivileAIInfluencePatch";
+        public override string DisplayName => "BellumCivile AI Influence Patch";
+        public override string FolderName => "BellumCivileAIInfluencePatch";
         public override string FormatType => "json2";
 
         // 示例配置项，开发时替换或删除
