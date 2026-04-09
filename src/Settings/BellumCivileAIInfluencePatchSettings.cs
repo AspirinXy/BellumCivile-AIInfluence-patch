@@ -1,14 +1,10 @@
 using MCM.Abstractions.Attributes;
 using MCM.Abstractions.Attributes.v2;
 using MCM.Abstractions.Base.Global;
+using MCM.Common;
 
 namespace BellumCivileAIInfluencePatch.Settings
 {
-    /// <summary>
-    /// MCM 游戏内配置面板。
-    /// MCM 通过反射自动发现此类，无需手动注册。
-    /// 必须实现四个抽象属性：Id, DisplayName, FolderName, FormatType。
-    /// </summary>
     public class BellumCivileAIInfluencePatchSettings : AttributeGlobalSettings<BellumCivileAIInfluencePatchSettings>
     {
         public override string Id => "BellumCivileAIInfluencePatch";
@@ -16,10 +12,37 @@ namespace BellumCivileAIInfluencePatch.Settings
         public override string FolderName => "BellumCivileAIInfluencePatch";
         public override string FormatType => "json2";
 
-        // 示例配置项，开发时替换或删除
-        [SettingPropertyBool("启用功能", Order = 0, RequireRestart = false,
-            HintText = "启用/禁用主要功能")]
-        [SettingPropertyGroup("基础开关")]
-        public bool EnableFeature { get; set; } = true;
+        [SettingPropertyBool("Enable Bridge", Order = 0, RequireRestart = false,
+            HintText = "Enable/disable the BellumCivile to AIInfluence data bridge.")]
+        [SettingPropertyGroup("General")]
+        public bool EnableBridge { get; set; } = true;
+
+        [SettingPropertyDropdown("Language", Order = 1, RequireRestart = false,
+            HintText = "Language for political descriptions. Auto detects game language.")]
+        [SettingPropertyGroup("General")]
+        public Dropdown<string> Language { get; set; }
+            = new Dropdown<string>(
+                new[] { "Auto", "中文", "English" }, 0);
+
+        [SettingPropertyBool("Write Dynamic Events", Order = 2, RequireRestart = false,
+            HintText = "Attempt to write major political events to dynamic_events.json (experimental).")]
+        [SettingPropertyGroup("General")]
+        public bool WriteDynamicEvents { get; set; } = true;
+
+        [SettingPropertyBool("Debug Log", Order = 3, RequireRestart = false,
+            HintText = "Log sync details to game messages for debugging.")]
+        [SettingPropertyGroup("Debug")]
+        public bool DebugLog { get; set; } = false;
+
+        public PatchLanguage GetPatchLanguage()
+        {
+            string selected = Language?.SelectedValue ?? "Auto";
+            switch (selected)
+            {
+                case "中文": return PatchLanguage.Chinese;
+                case "English": return PatchLanguage.English;
+                default: return PatchLanguage.Auto;
+            }
+        }
     }
 }
