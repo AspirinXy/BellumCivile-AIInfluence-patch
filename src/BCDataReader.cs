@@ -142,12 +142,12 @@ namespace BellumCivileAIInfluencePatch
         {
             try
             {
-                var method = HarmonyLib.AccessTools.Method(typeof(FactionManagerBehavior), "CalculateDesiredFiefs");
+                var method = HarmonyLib.AccessTools.Method(typeof(FactionObject), "CalculateDesiredFiefs");
                 if (method != null)
-                    return (int)method.Invoke(_factionManager, new object[] { clan });
+                    return (int)method.Invoke(null, new object[] { clan });
             }
             catch { }
-            // Fallback: approximate from game data
+            // Fallback: approximate from clan tier
             return clan.Tier + 1;
         }
     }
