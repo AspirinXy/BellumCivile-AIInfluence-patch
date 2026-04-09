@@ -1,0 +1,23 @@
+<Module>
+  <Name value="ModTemplate"/>
+  <Id value="ModTemplate"/>
+  <Version value="v1.0.0"/>
+  <SingleplayerModule value="true"/>
+  <MultiplayerModule value="false"/>
+  <DependedModules>
+    <DependedModule Id="Native"/>
+    <DependedModule Id="SandBoxCore"/>
+    <DependedModule Id="Sandbox"/>
+    <DependedModule Id="Bannerlord.Harmony"/>
+    <DependedModule Id="Bannerlord.MBOptionScreen"/>
+  </DependedModules>
+  <SubModules>
+    <SubModule>
+      <Name value="ModTemplate"/>
+      <DLLName value="ModTemplate.dll"/>
+      <SubModuleClassType value="ModTemplate.ModTemplateSubModule"/>
+      <Assemblies/>
+    </SubModule>
+  </SubModules>
+  <Xmls/>
+</Module>
