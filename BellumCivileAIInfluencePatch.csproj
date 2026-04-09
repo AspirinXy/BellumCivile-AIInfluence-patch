@@ -52,6 +52,10 @@
       <HintPath>$(BANNERLORD_PATH)\Modules\BellumCivile\bin\Win64_Shipping_Client\BellumCivile.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="TaleWorlds.Localization">
+      <HintPath>$(BANNERLORD_PATH)\bin\Win64_Shipping_Client\TaleWorlds.Localization.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>$(BANNERLORD_PATH)\bin\Win64_Shipping_Client\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
