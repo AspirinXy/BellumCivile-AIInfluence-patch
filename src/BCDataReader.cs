@@ -46,8 +46,15 @@ namespace BellumCivileAIInfluencePatch
                         continue;
                     if (clan.Leader == null || clan.Leader.IsDead) continue;
 
-                    var clanData = BuildClanData(clan, kingdom);
-                    snapshot.ClanData[clan.StringId] = clanData;
+                    // Generate one entry per lord hero in the clan (not just the leader)
+                    foreach (var hero in clan.Heroes)
+                    {
+                        if (hero == null || hero.IsDead || !hero.IsLord || !hero.IsActive)
+                            continue;
+
+                        var clanData = BuildClanData(clan, kingdom, hero);
+                        snapshot.ClanData[hero.StringId] = clanData;
+                    }
                 }
             }
 
@@ -95,7 +102,7 @@ namespace BellumCivileAIInfluencePatch
             return data;
         }
 
-        private static ClanPoliticalData BuildClanData(Clan clan, Kingdom kingdom)
+        private static ClanPoliticalData BuildClanData(Clan clan, Kingdom kingdom, Hero hero)
         {
             var data = new ClanPoliticalData
             {
@@ -104,13 +111,15 @@ namespace BellumCivileAIInfluencePatch
                 KingdomId = kingdom.StringId,
                 OwnedFiefs = clan.Fiefs?.Count ?? 0,
                 DesiredFiefs = GetDesiredFiefs(clan),
-                HeroStringId = clan.Leader?.StringId
+                HeroStringId = hero.StringId,
+                HeroName = hero.Name?.ToString() ?? hero.StringId,
+                IsClanLeader = hero == clan.Leader
             };
 
-            // relation with ruler
-            if (kingdom.RulingClan?.Leader != null && clan.Leader != null)
+            // relation with ruler — use this hero's personal relation
+            if (kingdom.RulingClan?.Leader != null)
             {
-                data.RelationWithRuler = clan.Leader.GetRelation(kingdom.RulingClan.Leader);
+                data.RelationWithRuler = hero.GetRelation(kingdom.RulingClan.Leader);
             }
 
             // ideology faction

@@ -125,11 +125,12 @@ namespace BellumCivileAIInfluencePatch
             {
                 sb.AppendLine("[BC_POLITICAL_START]");
                 sb.Append("【你的政治立场】");
+                sb.Append($"你是{clan.ClanName}氏族的{(clan.IsClanLeader ? "族长" : "成员")}。");
 
                 if (clan.IdeologyFactionType != null)
                 {
                     string typeName = GetFactionTypeName(clan.IdeologyFactionType, cn);
-                    sb.Append($"你是{typeName}成员，");
+                    sb.Append($"你的氏族属于{typeName}，");
                     string moodDesc = GetMoodDescription(clan.IdeologyMood, cn);
                     sb.Append($"派系情绪{moodDesc}。");
                 }
@@ -140,10 +141,10 @@ namespace BellumCivileAIInfluencePatch
 
                 if (clan.RebelFactionName != null)
                 {
-                    sb.Append($"你参与了\u201c{clan.RebelFactionName}\u201d反叛运动（{GetFactionTypeName(clan.RebelFactionType, cn)}）。");
+                    sb.Append($"你的氏族参与了\u201c{clan.RebelFactionName}\u201d反叛运动（{GetFactionTypeName(clan.RebelFactionType, cn)}）。");
                 }
 
-                sb.Append($"你的叛乱倾向为{clan.RebellionScore:F0}/100");
+                sb.Append($"你的氏族叛乱倾向为{clan.RebellionScore:F0}/100");
                 if (clan.RebellionScore >= 80) sb.Append("，极度不满");
                 else if (clan.RebellionScore >= 50) sb.Append("，心怀不满");
                 else if (clan.RebellionScore < 30) sb.Append("，比较安分");
@@ -161,12 +162,12 @@ namespace BellumCivileAIInfluencePatch
             else
             {
                 sb.AppendLine("[BC_POLITICAL_START]");
-                sb.Append("[Your Political Stance] ");
+                sb.Append($"[Your Political Stance] You are {(clan.IsClanLeader ? "the leader" : "a member")} of Clan {clan.ClanName}. ");
 
                 if (clan.IdeologyFactionType != null)
                 {
                     string typeName = GetFactionTypeName(clan.IdeologyFactionType, cn);
-                    sb.Append($"You are a member of the {typeName}. ");
+                    sb.Append($"Your clan belongs to the {typeName}. ");
                     string moodDesc = GetMoodDescription(clan.IdeologyMood, cn);
                     sb.Append($"Faction mood: {moodDesc}. ");
                 }
@@ -177,10 +178,10 @@ namespace BellumCivileAIInfluencePatch
 
                 if (clan.RebelFactionName != null)
                 {
-                    sb.Append($"You are part of the \"{clan.RebelFactionName}\" rebellion ({GetFactionTypeName(clan.RebelFactionType, cn)}). ");
+                    sb.Append($"Your clan is part of the \"{clan.RebelFactionName}\" rebellion ({GetFactionTypeName(clan.RebelFactionType, cn)}). ");
                 }
 
-                sb.Append($"Your rebellious intent is {clan.RebellionScore:F0}/100");
+                sb.Append($"Your clan's rebellious intent is {clan.RebellionScore:F0}/100");
                 if (clan.RebellionScore >= 80) sb.Append(" — deeply discontented");
                 else if (clan.RebellionScore >= 50) sb.Append(" — harboring grievances");
                 else if (clan.RebellionScore < 30) sb.Append(" — relatively content");

@@ -99,7 +99,7 @@ namespace BellumCivileAIInfluencePatch
             }
 
             if (debug)
-                LogMessage($"NPC files checked: {updatedCount} clans", false);
+                LogMessage($"NPC files checked: {updatedCount} lords", false);
 
             _previousSnapshot = snapshot;
         }

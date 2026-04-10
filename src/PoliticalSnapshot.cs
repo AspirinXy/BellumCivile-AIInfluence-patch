@@ -15,7 +15,9 @@ namespace BellumCivileAIInfluencePatch
         public int OwnedFiefs { get; set; }
         public int DesiredFiefs { get; set; }
         public float IdeologyMood { get; set; }
-        public string HeroStringId { get; set; }        // clan leader's Hero.StringId for NPC file matching
+        public string HeroStringId { get; set; }        // Hero.StringId for NPC file matching
+        public string HeroName { get; set; }             // Hero display name
+        public bool IsClanLeader { get; set; }           // whether this hero is the clan leader
 
         public bool ContentEquals(ClanPoliticalData other)
         {
