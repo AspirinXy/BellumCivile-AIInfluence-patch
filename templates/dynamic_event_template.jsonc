@@ -1,0 +1,169 @@
+// ============================================================
+// AIInfluence Dynamic Event Template
+// ============================================================
+// 使用方法：
+// 1. 复制本模板内容（去掉注释）
+// 2. 填入实际值
+// 3. 追加到 dynamic_events.json 数组末尾
+// 4. 保存后重新加载存档即可生效
+//
+// 文件位置：
+//   Modules/AIInfluence/save_data/<存档ID>/dynamic_events.json
+//
+// 注意：
+// - id 必须是唯一的 UUID 格式
+// - campaign_days 可在游戏中按 Alt+~ 打开控制台查看
+// - characters_involved 使用 hero StringId (如 "lord_1_1")
+// - kingdoms_involved 使用 kingdom StringId (如 "empire", "sturgia")
+// ============================================================
+
+{
+  // ---- 唯一标识 ----
+  // 生成方式：https://www.uuidgenerator.net/ 或任意UUID工具
+  "id": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
+
+  // ---- 事件类型 ----
+  // "political"  - 政治事件（代理战争、派系、内战）
+  // "economic"   - 经济事件（贸易、商路、税收）
+  // "social"     - 社会事件（婚姻、继承、节庆）
+  // "military"   - 军事事件（战役、围城）
+  // "disease_outbreak" - 疫病爆发
+  "type": "political",
+
+  // ---- 标题和描述 ----
+  // 标题：简短，20字以内
+  // 描述：详细的事件叙述，AI会基于此生成NPC对话
+  "title": "事件标题",
+  "description": "详细的事件描述。写得越有细节、越沉浸，AI生成的NPC对话就越好。可以包含人名、地名、具体数字等。",
+
+  // ---- 事件历史 ----
+  // 记录事件的发展过程，初始只需要一条
+  "event_history": [
+    {
+      "campaign_days": 91000.0,
+      "description": "与上面的description相同即可",
+      "update_reason": "Initial Event",
+      "days_since_creation": 0,
+      "economic_effects": []
+    }
+  ],
+
+  // ---- 玩家参与 ----
+  "player_involved": false,
+
+  // ---- 涉及王国 ----
+  // 王国 StringId 列表：
+  //   empire    - 北帝国    empire_w  - 西帝国    empire_s  - 南帝国
+  //   sturgia   - 斯特吉亚  vlandia   - 瓦兰迪亚  battania  - 巴旦尼亚
+  //   khuzait   - 库赛特    aserai    - 阿塞莱
+  "kingdoms_involved": [
+    "kingdom_id_1",
+    "kingdom_id_2"
+  ],
+
+  // ---- 涉及角色 ----
+  // Hero StringId 列表，可在NPC文件名中找到，如 "卢孔 (lord_1_1).json"
+  // 常用角色ID：
+  //   lord_1_1  - 卢孔(北帝国)     lord_1_9  - 加里俄斯(西帝国)
+  //   lord_1_7  - 拉盖娅(南帝国)   lord_2_1  - 朗瓦德(斯特吉亚)
+  //   lord_3_1  - 卡拉多格(巴旦尼亚) lord_4_1 - 德瑟特(瓦兰迪亚)
+  //   lord_5_1  - 乌奈德(阿塞莱)   lord_6_1  - 蒙楚格(库赛特)
+  "characters_involved": [
+    "lord_x_x",
+    "lord_y_y"
+  ],
+
+  // ---- 重要性 ----
+  // 1-10，越高越重要，AI越可能在对话中提及
+  //   5 = 普通事件    7 = 重要事件    8-9 = 重大事件    10 = 改变历史
+  "importance": 7,
+
+  // ---- 传播速度 ----
+  // "slow" - 慢（宫廷秘密）  "normal" - 正常  "fast" - 快（公开事件）
+  "spread_speed": "fast",
+
+  // ---- 外交回应 ----
+  // true = AI王国统治者会对此事件发表声明
+  "allows_diplomatic_response": true,
+
+  // ---- 适用NPC类型 ----
+  // 哪些类型的NPC会知道这个事件，可组合使用
+  // "all"              - 所有NPC
+  // "lords"            - 领主/贵族
+  // "faction_leaders"  - 派系领袖/国王
+  // "merchants"        - 商人
+  // "village_notables" - 村庄名望人物
+  // "companions"       - 玩家同伴
+  // "mercenaries"      - 雇佣兵（非官方文档值）
+  "applicable_npcs": [
+    "lords",
+    "faction_leaders",
+    "merchants"
+  ],
+
+  // ---- 经济效果（可选）----
+  // 注意：我们测试发现外部写入的economic_effects不一定生效
+  // BellumCivile的代理战争本身会处理机械效果，这里主要用于叙事
+  "economic_effects": [],
+
+  // ---- 时间戳 ----
+  // creation_time: 现实时间 ISO 8601 格式
+  // creation_campaign_days: 游戏内天数
+  // expiration: 事件过期时间，通常设为84天后
+  "creation_time": "2026-04-10T12:00:00.0000000+08:00",
+  "creation_campaign_days": 91000.0,
+  "expiration_time": "2026-07-03T12:00:00.0000000+08:00",
+  "expiration_campaign_days": 91084.0,
+
+  // ---- 外交系统字段（保持默认即可）----
+  "participating_kingdoms": [],
+  "kingdom_statements": [],
+
+  // ---- 是否需要AI外交分析 ----
+  // true = AIInfluence会自动让相关王国统治者生成外交声明
+  "requires_diplomatic_analysis": true,
+
+  "diplomatic_rounds": 0,
+  "statements_at_round_start": 0,
+  "next_analysis_attempt_days": 0.0,
+  "next_statement_attempt_days": {},
+  "failed_statement_attempts": {}
+}
+
+// ============================================================
+// 快速示例
+// ============================================================
+//
+// 示例1：代理战争被发现
+// {
+//   "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+//   "type": "political",
+//   "title": "阴谋败露：瓦兰迪亚资助斯特吉亚境内土匪",
+//   "description": "瓦兰迪亚国王德瑟特的密使在斯特吉亚被捕...",
+//   "kingdoms_involved": ["sturgia", "vlandia"],
+//   "characters_involved": ["lord_2_1", "lord_4_1"],
+//   "importance": 8,
+//   "requires_diplomatic_analysis": true,
+//   ...
+// }
+//
+// 示例2：内战爆发
+// {
+//   "type": "political",
+//   "title": "斯特吉亚内战爆发",
+//   "description": "库洛夫氏族正式举旗反叛...",
+//   "kingdoms_involved": ["sturgia"],
+//   "importance": 9,
+//   ...
+// }
+//
+// 示例3：经济事件
+// {
+//   "type": "economic",
+//   "title": "丝绸之路重开",
+//   "description": "东方商路恢复通行...",
+//   "kingdoms_involved": ["empire_w", "khuzait"],
+//   "importance": 5,
+//   "allows_diplomatic_response": false,
+//   ...
+// }

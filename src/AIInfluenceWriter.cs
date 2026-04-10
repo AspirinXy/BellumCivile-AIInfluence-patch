@@ -158,6 +158,15 @@ namespace BellumCivileAIInfluencePatch
         public static void WriteDynamicEvent(string title, string description,
             string kingdomId, List<string> characterIds, float campaignDays)
         {
+            WriteDynamicEvent(title, description,
+                new List<string> { kingdomId }, characterIds,
+                campaignDays, 7, false);
+        }
+
+        public static void WriteDynamicEvent(string title, string description,
+            List<string> kingdomIds, List<string> characterIds,
+            float campaignDays, int importance, bool requiresDiplomaticAnalysis)
+        {
             if (_saveDataPath == null) return;
             string eventsPath = Path.Combine(_saveDataPath, "dynamic_events.json");
 
@@ -176,7 +185,7 @@ namespace BellumCivileAIInfluencePatch
 
                 var newEvent = new JObject
                 {
-                    ["id"] = "bc_event_" + Guid.NewGuid().ToString("N").Substring(0, 12),
+                    ["id"] = Guid.NewGuid().ToString(),
                     ["type"] = "political",
                     ["title"] = title,
                     ["description"] = description,
@@ -192,9 +201,9 @@ namespace BellumCivileAIInfluencePatch
                         }
                     },
                     ["player_involved"] = false,
-                    ["kingdoms_involved"] = new JArray(kingdomId),
+                    ["kingdoms_involved"] = new JArray(kingdomIds.ToArray()),
                     ["characters_involved"] = new JArray(characterIds.ToArray()),
-                    ["importance"] = 7,
+                    ["importance"] = importance,
                     ["spread_speed"] = "fast",
                     ["allows_diplomatic_response"] = true,
                     ["applicable_npcs"] = new JArray("lords", "faction_leaders", "merchants"),
@@ -205,7 +214,7 @@ namespace BellumCivileAIInfluencePatch
                     ["expiration_campaign_days"] = campaignDays + 84,
                     ["participating_kingdoms"] = new JArray(),
                     ["kingdom_statements"] = new JArray(),
-                    ["requires_diplomatic_analysis"] = false,
+                    ["requires_diplomatic_analysis"] = requiresDiplomaticAnalysis,
                     ["diplomatic_rounds"] = 0,
                     ["statements_at_round_start"] = 0,
                     ["next_analysis_attempt_days"] = 0.0,
