@@ -121,7 +121,7 @@ namespace BellumCivileAIInfluencePatch
             {
                 string json = File.ReadAllText(npcFilePath);
                 var npc = JsonConvert.DeserializeObject<JObject>(json);
-                if (npc == null) return;
+                if (npc == null) return false;
 
                 // Update CharacterDescription with political block
                 string charDesc = npc["CharacterDescription"]?.ToString() ?? "";
