@@ -29,7 +29,27 @@ namespace BellumCivileAIInfluencePatch.Settings
         [SettingPropertyGroup("General")]
         public bool WriteDynamicEvents { get; set; } = true;
 
-        [SettingPropertyBool("Debug Log", Order = 3, RequireRestart = false,
+        [SettingPropertyBool("Enable DeepSeek Expansion", Order = 3, RequireRestart = false,
+            HintText = "Use DeepSeek AI to expand brief event descriptions into immersive narratives.")]
+        [SettingPropertyGroup("DeepSeek")]
+        public bool EnableDeepSeek { get; set; } = false;
+
+        [SettingPropertyText("API Key", Order = 4, RequireRestart = false,
+            HintText = "DeepSeek API key. Get one from platform.deepseek.com")]
+        [SettingPropertyGroup("DeepSeek")]
+        public string DeepSeekApiKey { get; set; } = "sk-xxx";
+
+        [SettingPropertyText("API URL", Order = 5, RequireRestart = false,
+            HintText = "DeepSeek API endpoint URL. Default: https://api.deepseek.com/v1/chat/completions")]
+        [SettingPropertyGroup("DeepSeek")]
+        public string DeepSeekApiUrl { get; set; } = "https://api.deepseek.com/v1/chat/completions";
+
+        [SettingPropertyText("Model", Order = 6, RequireRestart = false,
+            HintText = "DeepSeek model name. Default: deepseek-chat")]
+        [SettingPropertyGroup("DeepSeek")]
+        public string DeepSeekModel { get; set; } = "deepseek-chat";
+
+        [SettingPropertyBool("Debug Log", Order = 7, RequireRestart = false,
             HintText = "Log sync details to game messages for debugging.")]
         [SettingPropertyGroup("Debug")]
         public bool DebugLog { get; set; } = false;

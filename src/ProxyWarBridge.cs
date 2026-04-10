@@ -5,7 +5,9 @@ using System.Reflection;
 using BellumCivile.Behaviors;
 using HarmonyLib;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.Core;
 using TaleWorlds.Library;
+using TaleWorlds.Localization;
 
 namespace BellumCivileAIInfluencePatch
 {
@@ -127,6 +129,15 @@ namespace BellumCivileAIInfluencePatch
                 string description = cn
                     ? $"{actingName}的{actingRulerName}被{targetName}的{targetRulerName}揭露{actionDesc}。这一阴谋的曝光引发了严重的外交危机，两国关系急剧恶化。"
                     : $"{actingRulerName} of {actingName} has been exposed by {targetRulerName} of {targetName} for {actionDesc}. The exposure of this plot has caused a severe diplomatic crisis, with relations between the two kingdoms deteriorating sharply.";
+
+                // DeepSeek expansion
+                if (settings?.EnableDeepSeek ?? false)
+                {
+                    string kingdomContext = cn
+                        ? $"{actingName}与{targetName}之间的秘密代理战争"
+                        : $"A covert proxy war between {actingName} and {targetName}";
+                    description = DeepSeekClient.ExpandDescription(description, title, kingdomContext, cn);
+                }
 
                 var characterIds = new List<string>();
                 if (actingKingdom.RulingClan?.Leader != null)
@@ -292,6 +303,15 @@ namespace BellumCivileAIInfluencePatch
                         ? $"{targetName}近日遭受了一系列不明来源的破坏活动（{actionName}），朝堂震动，民间议论纷纷。官方尚未查明幕后黑手，但有传言暗示这可能是外国势力的手笔。"
                         : $"{targetName} has recently suffered mysterious disruptions ({ProxyWarBridge.GetActionName(actionType, false)}). The court is shaken and rumors abound. Officials have yet to identify the perpetrator, though whispers suggest foreign involvement.";
 
+                    // DeepSeek expansion
+                    if (settings?.EnableDeepSeek ?? false)
+                    {
+                        string kingdomContext = cn
+                            ? $"{targetName}遭受的神秘破坏事件"
+                            : $"Mysterious disruption in {targetName}";
+                        description = DeepSeekClient.ExpandDescription(description, title, kingdomContext, cn);
+                    }
+
                     var characterIds = new List<string>();
                     if (targetKingdom.RulingClan?.Leader != null)
                         characterIds.Add(targetKingdom.RulingClan.Leader.StringId);
@@ -336,10 +356,20 @@ namespace BellumCivileAIInfluencePatch
             }
 
             string message = cn
-                ? "【BC-AI桥接】新的动态事件已生成，建议保存并重新加载存档以使AI感知最新事件。"
-                : "[BC-AI Bridge] New dynamic event created. Save and reload to let AI perceive the latest events.";
+                ? "新的动态事件已生成，建议保存并重新加载存档以使AI感知最新事件"
+                : "New dynamic event created. Save and reload to let AI perceive the latest events";
 
-            InformationManager.DisplayMessage(new InformationMessage(message, Colors.Yellow));
+            // Top-center banner notification
+            MBInformationManager.AddQuickInformation(
+                new TextObject("{=BC_AI_ReloadBanner}" + message),
+                0,
+                null,
+                null,
+                "event:/ui/notification/quest_update");
+
+            // Also log to message area for persistence
+            InformationManager.DisplayMessage(
+                new InformationMessage("[BC-AI Bridge] " + message, Colors.Yellow));
 
             _lastBannerTime = CampaignTime.Now;
             _bannerShownThisSession = true;
