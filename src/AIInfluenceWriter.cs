@@ -109,13 +109,13 @@ namespace BellumCivileAIInfluencePatch
             }
         }
 
-        public static void UpdateNpcFile(string heroStringId, string clanDescription,
+        public static bool UpdateNpcFile(string heroStringId, string clanDescription,
             string kingdomId, bool enableDebugLog)
         {
-            if (_saveDataPath == null || heroStringId == null) return;
+            if (_saveDataPath == null || heroStringId == null) return false;
 
             string npcFilePath = FindNpcFile(heroStringId);
-            if (npcFilePath == null) return; // File doesn't exist yet — skip
+            if (npcFilePath == null) return false; // File doesn't exist yet — skip
 
             try
             {
@@ -145,10 +145,13 @@ namespace BellumCivileAIInfluencePatch
 
                 if (enableDebugLog)
                     Log($"Updated NPC file: {Path.GetFileName(npcFilePath)}");
+
+                return true;
             }
             catch (Exception ex)
             {
                 LogError($"UpdateNpcFile failed for {heroStringId}: {ex.Message}");
+                return false;
             }
         }
 

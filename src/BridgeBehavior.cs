@@ -94,8 +94,8 @@ namespace BellumCivileAIInfluencePatch
             foreach (var kv in snapshot.ClanData)
             {
                 string desc = DescriptionTemplates.BuildClanDescription(kv.Value, lang);
-                AIInfluenceWriter.UpdateNpcFile(kv.Value.HeroStringId, desc, kv.Value.KingdomId, debug);
-                updatedCount++;
+                if (AIInfluenceWriter.UpdateNpcFile(kv.Value.HeroStringId, desc, kv.Value.KingdomId, debug))
+                    updatedCount++;
             }
 
             if (debug)
@@ -144,8 +144,8 @@ namespace BellumCivileAIInfluencePatch
                 if (prev == null || !prev.ContentEquals(kv.Value))
                 {
                     string desc = DescriptionTemplates.BuildClanDescription(kv.Value, lang);
-                    AIInfluenceWriter.UpdateNpcFile(kv.Value.HeroStringId, desc, kv.Value.KingdomId, debug);
-                    changedCount++;
+                    if (AIInfluenceWriter.UpdateNpcFile(kv.Value.HeroStringId, desc, kv.Value.KingdomId, debug))
+                        changedCount++;
                 }
             }
 
