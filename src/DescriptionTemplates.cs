@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TaleWorlds.CampaignSystem;
 using TaleWorlds.MountAndBlade;
 
 namespace BellumCivileAIInfluencePatch
@@ -314,6 +316,38 @@ namespace BellumCivileAIInfluencePatch
                 if (mood >= -20) return "Neutral";
                 if (mood >= -50) return "Unhappy";
                 return "Furious";
+            }
+        }
+
+        /// <summary>
+        /// Formats current campaign time as an in-game date string.
+        /// CN: "卡拉迪亚历1084年春季第3日"  EN: "Spring 3, 1084 AC"
+        /// </summary>
+        public static string FormatGameDate(bool cn)
+        {
+            try
+            {
+                var now = CampaignTime.Now;
+                int year = (int)now.GetYear;
+                int season = (int)now.GetSeasonOfYear;
+                int day = (int)now.GetDayOfSeason + 1;
+
+                if (cn)
+                {
+                    string[] seasons = { "春季", "夏季", "秋季", "冬季" };
+                    string s = (season >= 0 && season < 4) ? seasons[season] : "春季";
+                    return $"卡拉迪亚历{year}年{s}第{day}日";
+                }
+                else
+                {
+                    string[] seasons = { "Spring", "Summer", "Autumn", "Winter" };
+                    string s = (season >= 0 && season < 4) ? seasons[season] : "Spring";
+                    return $"{s} {day}, {year} AC";
+                }
+            }
+            catch
+            {
+                return cn ? "未知日期" : "Unknown date";
             }
         }
 

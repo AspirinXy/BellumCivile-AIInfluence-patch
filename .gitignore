@@ -4,3 +4,5 @@ obj/
 *.user
 *.suo
 .idea/
+.claude/
+obj_verify/

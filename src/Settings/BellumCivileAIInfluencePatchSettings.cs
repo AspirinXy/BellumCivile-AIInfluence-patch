@@ -4,6 +4,7 @@ using MCM.Abstractions.Attributes;
 using MCM.Abstractions.Attributes.v2;
 using MCM.Abstractions.Base.Global;
 using MCM.Common;
+using TaleWorlds.CampaignSystem;
 using TaleWorlds.Core;
 using TaleWorlds.Library;
 using TaleWorlds.Localization;
@@ -129,12 +130,67 @@ namespace BellumCivileAIInfluencePatch.Settings
                     : $"DeepSeek API test failed: {detail}";
                 MBInformationManager.AddQuickInformation(
                     new TextObject("{=BC_AI_TestResult}" + bannerText),
-                    0, null, null, "");
+                    4000, null, null, "");
             }
             catch { }
         }
 
-        [SettingPropertyBool("Debug Log", Order = 8, RequireRestart = false,
+        private bool _syncEvents;
+
+        [SettingPropertyBool("Sync Dynamic Events", Order = 8, RequireRestart = false,
+            HintText = "Toggle ON to sync BellumCivile dynamic events into AIInfluence's dynamic_events.json. Events are stored locally first and only written to AIInfluence when you click this.")]
+        [SettingPropertyGroup("General")]
+        public bool SyncEvents
+        {
+            get => _syncEvents;
+            set
+            {
+                if (value && !_syncEvents)
+                {
+                    _syncEvents = true;
+                    RunSync();
+                    Task.Delay(500).ContinueWith(_ => _syncEvents = false);
+                }
+                else
+                {
+                    _syncEvents = value;
+                }
+            }
+        }
+
+        private void RunSync()
+        {
+            try
+            {
+                float campaignDays = Campaign.Current != null
+                    ? (float)CampaignTime.Now.ToDays
+                    : 0f;
+
+                var (synced, total) = AIInfluenceWriter.SyncDynamicEvents(campaignDays);
+
+                bool cn = GetPatchLanguage() == PatchLanguage.Chinese ||
+                          (GetPatchLanguage() == PatchLanguage.Auto &&
+                           DescriptionTemplates.ShouldUseChinese(PatchLanguage.Auto));
+
+                string message = cn
+                    ? $"同步完成：{synced} 个新事件已写入，本地共 {total} 个事件"
+                    : $"Sync complete: {synced} new events written, {total} total in local store";
+
+                InformationManager.DisplayMessage(
+                    new InformationMessage("[BC-AI Bridge] " + message, Colors.Green));
+
+                MBInformationManager.AddQuickInformation(
+                    new TextObject("{=BC_AI_SyncResult}" + message),
+                    4000, null, null, "");
+            }
+            catch (Exception ex)
+            {
+                InformationManager.DisplayMessage(
+                    new InformationMessage("[BC-AI Bridge] Sync failed: " + ex.Message, Colors.Red));
+            }
+        }
+
+        [SettingPropertyBool("Debug Log", Order = 9, RequireRestart = false,
             HintText = "Log sync details to game messages for debugging.")]
         [SettingPropertyGroup("Debug")]
         public bool DebugLog { get; set; } = false;

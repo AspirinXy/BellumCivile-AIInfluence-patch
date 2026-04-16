@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using BellumCivileAIInfluencePatch.Settings;
 using TaleWorlds.CampaignSystem;
+using TaleWorlds.CampaignSystem.Actions;
 using TaleWorlds.Library;
 
 namespace BellumCivileAIInfluencePatch
@@ -162,57 +163,9 @@ namespace BellumCivileAIInfluencePatch
             bool cn = DescriptionTemplates.ShouldUseChinese(lang);
             float campaignDays = (float)CampaignTime.Now.ToDays;
 
-            // Detect new factions
-            foreach (string name in current.ActiveFactionNames)
-            {
-                if (!_previousSnapshot.ActiveFactionNames.Contains(name))
-                {
-                    var faction = current.KingdomData.Values
-                        .SelectMany(k => k.Factions)
-                        .FirstOrDefault(f => f.FactionName == name);
-
-                    if (faction != null && !faction.IsIdeology)
-                    {
-                        string title = cn
-                            ? $"新反叛派系成立：{name}"
-                            : $"New Rebellion Formed: {name}";
-                        string desc = cn
-                            ? $"{faction.LeaderClanName}氏族领导的\u201c{name}\u201d正式成立，以\u201c{faction.DemandDescription}\u201d为诉求，{faction.MemberCount}个氏族响应。王国内部政治裂痕加深。"
-                            : $"The \"{name}\" led by Clan {faction.LeaderClanName} has been formally established, demanding \"{faction.DemandDescription}\". {faction.MemberCount} clans have joined. Political fractures deepen.";
-
-                        AIInfluenceWriter.WriteDynamicEvent(title, desc,
-                            faction.KingdomId,
-                            faction.MemberClanIds,
-                            campaignDays);
-                    }
-                }
-            }
-
-            // Detect disbanded factions
-            foreach (string name in _previousSnapshot.ActiveFactionNames)
-            {
-                if (!current.ActiveFactionNames.Contains(name))
-                {
-                    var prevFaction = _previousSnapshot.KingdomData.Values
-                        .SelectMany(k => k.Factions)
-                        .FirstOrDefault(f => f.FactionName == name);
-
-                    if (prevFaction != null && !prevFaction.IsIdeology)
-                    {
-                        string title = cn
-                            ? $"反叛派系解散：{name}"
-                            : $"Rebellion Disbanded: {name}";
-                        string desc = cn
-                            ? $"\u201c{name}\u201d已宣告解散，{prevFaction.LeaderClanName}氏族领导的反叛运动暂告平息。"
-                            : $"The \"{name}\" has disbanded. The rebellion led by Clan {prevFaction.LeaderClanName} has been quelled.";
-
-                        AIInfluenceWriter.WriteDynamicEvent(title, desc,
-                            prevFaction.KingdomId,
-                            prevFaction.MemberClanIds,
-                            campaignDays);
-                    }
-                }
-            }
+            // Note: faction formation/disbandment is NOT written to dynamic events
+            // because world_info.json already contains detailed faction information.
+            // Only major state-changing events (civil war, ultimatum) go to dynamic events.
 
             // Detect civil war outbreak
             foreach (var kv in current.KingdomData)
@@ -229,10 +182,10 @@ namespace BellumCivileAIInfluencePatch
                         ? $"{kv.Value.KingdomName}陷入内战！政治派系的长期矛盾终于演变为公开武装冲突，反叛者已举旗独立，王国面临分裂危机。"
                         : $"{kv.Value.KingdomName} descends into civil war! Long-simmering factional tensions have erupted into open armed conflict. Rebels have raised their banners, and the kingdom faces a crisis of fracture.";
 
-                    var involvedChars = kv.Value.Factions
-                        .Where(f => !f.IsIdeology)
-                        .SelectMany(f => f.MemberClanIds)
-                        .ToList();
+                    var involvedChars = ResolveClanLeaderIds(
+                        kv.Value.Factions.Where(f => !f.IsIdeology)
+                            .SelectMany(f => f.MemberClanIds),
+                        kv.Key);
 
                     AIInfluenceWriter.WriteDynamicEvent(title, desc,
                         kv.Key, involvedChars, campaignDays);
@@ -248,8 +201,11 @@ namespace BellumCivileAIInfluencePatch
                         ? $"{kv.Value.KingdomName}的内战已经结束。无论胜负如何，王国的政治格局已被永久改变。"
                         : $"The civil war in {kv.Value.KingdomName} has ended. Regardless of the outcome, the political landscape has been permanently altered.";
 
+                    // Include at least the kingdom ruler
+                    var rulerIds = ResolveRulerIds(kv.Key);
+
                     AIInfluenceWriter.WriteDynamicEvent(title, desc,
-                        kv.Key, new List<string>(), campaignDays);
+                        kv.Key, rulerIds, campaignDays);
                 }
             }
 
@@ -276,11 +232,47 @@ namespace BellumCivileAIInfluencePatch
                             ? $"\u201c{faction.FactionName}\u201d向{kv.Value.RulerName}发出最后通牒，要求\u201c{faction.DemandDescription}\u201d。若被拒绝，内战将不可避免。"
                             : $"The \"{faction.FactionName}\" has issued an ultimatum to {kv.Value.RulerName}, demanding \"{faction.DemandDescription}\". If refused, civil war is inevitable.";
 
+                        var involvedChars = ResolveClanLeaderIds(
+                            faction.MemberClanIds, kv.Key);
+
                         AIInfluenceWriter.WriteDynamicEvent(title, desc,
-                            kv.Key, faction.MemberClanIds, campaignDays);
+                            kv.Key, involvedChars, campaignDays);
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Converts clan StringIds to their leaders' hero StringIds,
+        /// and always includes the kingdom ruler.
+        /// </summary>
+        private List<string> ResolveClanLeaderIds(IEnumerable<string> clanIds, string kingdomId)
+        {
+            var heroIds = new HashSet<string>();
+
+            // Add kingdom ruler
+            foreach (var rulerHeroId in ResolveRulerIds(kingdomId))
+                heroIds.Add(rulerHeroId);
+
+            // Add clan leaders
+            foreach (string clanId in clanIds)
+            {
+                var clan = Clan.All.FirstOrDefault(c => c.StringId == clanId);
+                if (clan?.Leader != null && !clan.Leader.IsDead)
+                    heroIds.Add(clan.Leader.StringId);
+            }
+
+            return heroIds.ToList();
+        }
+
+        /// <summary>Returns the ruler hero StringId for a kingdom.</summary>
+        private List<string> ResolveRulerIds(string kingdomId)
+        {
+            var result = new List<string>();
+            var kingdom = Kingdom.All.FirstOrDefault(k => k.StringId == kingdomId);
+            if (kingdom?.RulingClan?.Leader != null)
+                result.Add(kingdom.RulingClan.Leader.StringId);
+            return result;
         }
 
         private void LogMessage(string message, bool isError)
